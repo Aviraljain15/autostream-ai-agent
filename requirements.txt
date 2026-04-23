@@ -1,0 +1,18 @@
+# AutoStream AI Agent — Dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Core LangChain / LangGraph ──
+langgraph>=0.2.0
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-google-genai>=1.0.0
+
+# ── Terminal UI ──
+rich>=13.7.0
+
+# ── Web UI (optional) ──
+streamlit>=1.40.0
+
+# ── Utilities ──
+python-dotenv>=1.0.0
+typing-extensions>=4.9.0
