@@ -1,196 +1,171 @@
 # ▶ AutoStream — Conversational AI Sales Agent
 
 > An intelligent AI agent for AutoStream's video editing SaaS platform.
-> Built with **Gemini 1.5 Flash** + **LangGraph** for stateful multi-turn conversations.
+> Built using **LangGraph + OpenRouter (GPT-4o-mini)** for stateful multi-turn conversations.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-autostream-agent/
-│
-├── knowledge_base/
-│   └── autostream_kb.json       # RAG knowledge base (pricing, features, policies)
+autostream-ai-agent/
 │
 ├── agent/
-│   ├── __init__.py              # Package exports
-│   ├── state.py                 # LangGraph AgentState schema
-│   ├── rag.py                   # Knowledge retrieval module
-│   ├── tools.py                 # mock_lead_capture() + validation helpers
-│   ├── nodes.py                 # All 5 LangGraph node functions
-│   └── graph.py                 # StateGraph definition + conditional routing
+│   ├── __init__.py
+│   ├── nodes.py          # Core agent logic (intent, response, lead flow)
+│   ├── graph.py          # LangGraph workflow
+│   ├── rag.py            # Knowledge retrieval (RAG)
+│   ├── state.py          # Agent state schema
+│   ├── tools.py          # Lead capture + validation
 │
-├── app.py                       # CLI entry point (rich terminal UI)
-├── streamlit_app.py             # Web UI entry point
-├── requirements.txt             # Python dependencies
-├── .env.example                 # Environment variable template
-└── README.md                    # This file
+├── knowledge_base/
+│   └── autostream_kb.json
+│
+├── app.py                # CLI entry point
+├── requirements.txt
+├── README.md
 ```
 
 ---
 
-## 🏗️ Architecture
+## 🧠 Architecture Explanation
+
+This project is built using **LangGraph** to create a structured, stateful conversational AI agent.
+
+LangGraph was chosen because it enables precise control over multi-step workflows such as intent detection, retrieval, and tool execution. Unlike simple chatbots, it allows conditional routing between nodes based on user intent.
+
+The system follows a pipeline:
+
+* Intent classification
+* RAG-based retrieval
+* Response generation
+* Lead collection
+* Tool execution
+
+State is maintained using a shared `AgentState` object that stores:
+
+* Conversation history
+* Current intent
+* Lead information (name, email, platform)
+* Flow progress (awaiting fields, completion status)
+
+This ensures continuity across multiple turns.
+
+The RAG system uses a local JSON knowledge base to provide grounded answers for pricing and features.
+
+The lead capture tool is only triggered after all required fields are collected, ensuring correct execution logic.
+
+---
+
+## 🚀 How to Run
+
+### 1. Clone the repository
 
 ```
-User Input
-    │
-    ▼
-┌─────────────────────┐
-│   classify_intent   │  ← Gemini classifies: greeting | inquiry | high_intent | lead_field
-└─────────┬───────────┘
-          │
-    ┌─────┴──────────────────────────┐
-    │                                │
-    ▼                                ▼
-┌──────────────┐          ┌─────────────────────┐
-│  rag_retrieve │          │  collect_lead_info  │◄──┐
-└──────┬───────┘          └──────────┬──────────┘   │
-       │                             │               │
-       ▼                    all fields?              │
-┌──────────────────┐         YES │    NO             │
-│ generate_response│             ▼    └──────── (loop, wait for user)
-└──────────────────┘   ┌─────────────────────┐
-                        │ execute_lead_capture │
-                        │  → mock_lead_capture()│
-                        └─────────────────────┘
+git clone <your-repo-link>
+cd autostream-ai-agent
 ```
 
 ---
 
-## 🧠 Key Design Decisions
+### 2. Install dependencies
 
-| Decision  | Choice                       | Why                                            |
-| --------- | ---------------------------- | ---------------------------------------------- |
-| LLM       | Gemini 1.5 Flash             | Free-tier, fast, reliable for real-time agents |
-| Framework | LangGraph                    | Native state management, conditional routing   |
-| RAG       | Local JSON + keyword scoring | Lightweight, fast, no vector DB needed         |
-| State     | TypedDict                    | Clean multi-turn memory handling               |
-
----
-
-## 🚀 Quick Start
-
-### 1. Clone & Install
-
-```bash
-git clone <your-repo>
-cd autostream-agent
-
+```
 pip install -r requirements.txt
 ```
 
 ---
 
-### 2. Set API Key (Gemini)
+### 3. Add API key
 
-```bash
-cp .env.example .env
+Create a `.env` file:
+
 ```
-
-Edit `.env`:
-
-```env
-GOOGLE_API_KEY=your_api_key_here
+OPENROUTER_API_KEY=your_api_key_here
 ```
 
 ---
 
-### 3. Run (CLI)
+### 4. Run the app
 
-```bash
+```
 python app.py
 ```
 
 ---
 
-### 4. Run (Web UI)
+## 💬 Example Flow
 
-```bash
-streamlit run streamlit_app.py
+```
+User: hi
+→ greeting detected
+
+User: tell me about pricing
+→ RAG response
+
+User: i want pro plan for youtube
+→ high intent detected
+
+User: Aviral Jain
+User: aviral@gmail.com
+User: youtube
+→ lead captured successfully
 ```
 
 ---
 
-## 💬 Example Conversation Flow
+## 🤖 Agent Capabilities
 
-```
-You  › Hi! Tell me about your pricing.
-Maya › AutoStream offers two plans:
-       • Basic — $29/month: 10 videos, 720p resolution
-       • Pro   — $79/month: Unlimited videos, 4K, AI captions
-       Would you like to try Pro free for 14 days?
+### Intent Detection
 
-You  › That sounds great! I want to sign up for Pro for my YouTube channel.
-Maya › Amazing! YouTube creators love AutoStream Pro 🚀
-       Let's get you set up — what's your name?
-
-You  › Alex Johnson
-Maya › Great! And what's the best email address to reach you at?
-
-You  › alex@example.com
-Maya › Perfect! Last question — which platform do you primarily create for?
-
-You  › YouTube
-Maya › 🎉 You're all set, Alex! Your lead ID is AS-84201.
-       Expect a welcome email at alex@example.com shortly!
-```
+* greeting
+* inquiry
+* high_intent
+* lead_field
 
 ---
 
-## 🧠 Agent Capabilities
+### RAG (Retrieval-Augmented Generation)
 
-### 1. Intent Classification
-
-* **greeting** → small talk
-* **inquiry** → pricing, features, policies (RAG)
-* **high_intent** → ready to sign up (lead flow)
-* **lead_field** → user providing details
+* Uses local JSON knowledge base
+* Provides accurate pricing & features
+* Avoids hallucination
 
 ---
 
-### 2. RAG Knowledge Retrieval
+### Lead Capture Tool
 
-* Local JSON knowledge base
-* Keyword-based retrieval (fast, no embeddings needed)
-* Responses grounded strictly in retrieved context
-
----
-
-### 3. Lead Capture Tool
-
-* Step-by-step collection:
-
-  * Name → Email → Platform
-* Email validation + retry
-* Tool executes ONLY after all fields collected
-* Generates unique Lead ID
+* Collects Name → Email → Platform
+* Validates email
+* Executes only after full data collection
+* Generates Lead ID
 
 ---
 
-## 📋 Evaluation Checklist
+## 📱 WhatsApp Integration (Using Webhooks)
 
-| Criterion          | Implementation                    |
-| ------------------ | --------------------------------- |
-| ✅ Intent detection | LLM-based classifier (`nodes.py`) |
-| ✅ RAG              | Local JSON + retrieval (`rag.py`) |
-| ✅ State management | LangGraph `AgentState`            |
-| ✅ Tool calling     | Proper gated execution            |
-| ✅ Code structure   | Modular & scalable                |
-| ✅ Deployability    | CLI + Streamlit UI                |
+To integrate this agent with WhatsApp:
+
+1. Use WhatsApp Business API
+2. Set up a backend (FastAPI/Flask)
+3. Create a webhook endpoint to receive messages
+4. Pass incoming messages to the LangGraph agent
+5. Return generated responses via WhatsApp API
+
+User sessions can be tracked using phone numbers to maintain state across conversations.
 
 ---
 
 ## 🔧 Tech Stack
 
-* **Language**: Python 3.9+
-* **LLM**: Gemini 1.5 Flash (`langchain-google-genai`)
-* **Framework**: LangGraph
-* **RAG**: Local JSON knowledge base
-* **UI**: Rich (CLI), Streamlit (Web)
+* Python
+* LangGraph
+* OpenRouter (GPT-4o-mini)
+* Local JSON (RAG)
+* Rich (CLI UI)
 
 ---
 
 ## 📄 License
 
-MIT — Built for AutoStream internship assessment.
+MIT — Built for AutoStream internship evaluation
