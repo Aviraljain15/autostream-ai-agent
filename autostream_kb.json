@@ -1,0 +1,83 @@
+{
+  "company": {
+    "name": "AutoStream",
+    "tagline": "Automated video editing tools for content creators",
+    "website": "https://autostream.io",
+    "founded": "2022",
+    "description": "AutoStream is a SaaS platform that empowers content creators with AI-powered automated video editing. From smart cuts to AI-generated captions, AutoStream helps creators publish faster and smarter."
+  },
+  "plans": [
+    {
+      "name": "Basic",
+      "price_monthly": 29,
+      "price_annual": 290,
+      "videos_per_month": 10,
+      "max_resolution": "720p",
+      "features": [
+        "10 videos/month",
+        "720p resolution",
+        "Auto-cut & trim",
+        "Basic transitions",
+        "Email support (48h response)",
+        "Cloud storage: 10GB"
+      ],
+      "ideal_for": "Hobbyists and beginners just starting out"
+    },
+    {
+      "name": "Pro",
+      "price_monthly": 79,
+      "price_annual": 790,
+      "videos_per_month": "Unlimited",
+      "max_resolution": "4K",
+      "features": [
+        "Unlimited videos",
+        "4K resolution",
+        "AI captions & subtitles",
+        "Advanced transitions & effects",
+        "Priority 24/7 support",
+        "Cloud storage: 100GB",
+        "Custom branding & watermarks",
+        "Analytics dashboard",
+        "Team collaboration (up to 3 seats)"
+      ],
+      "ideal_for": "Professional creators, YouTubers, brand agencies"
+    }
+  ],
+  "policies": {
+    "refund": {
+      "policy": "No refunds after 7 days from subscription date.",
+      "details": "Users are eligible for a full refund within the first 7 days of any new subscription. After the 7-day window, subscriptions are non-refundable but can be cancelled to prevent future charges."
+    },
+    "support": {
+      "basic": "Email support with 48-hour response time.",
+      "pro": "24/7 priority support via live chat and email. Dedicated account manager for annual Pro subscribers."
+    },
+    "cancellation": {
+      "policy": "Cancel anytime. Access continues until end of billing period.",
+      "details": "There are no cancellation fees. Your account stays active until the end of the current billing cycle."
+    },
+    "free_trial": {
+      "available": true,
+      "duration": "14 days",
+      "details": "New users can try the Pro plan free for 14 days. No credit card required."
+    }
+  },
+  "faq": [
+    {
+      "question": "Can I switch plans?",
+      "answer": "Yes, you can upgrade or downgrade your plan at any time. Upgrades take effect immediately with prorated billing. Downgrades take effect at the next billing cycle."
+    },
+    {
+      "question": "What video formats are supported?",
+      "answer": "AutoStream supports MP4, MOV, AVI, MKV, and WebM for input. Output is available in MP4 and MOV formats."
+    },
+    {
+      "question": "Is there a free plan?",
+      "answer": "We don't have a permanently free plan, but we offer a 14-day free trial of the Pro plan — no credit card required."
+    },
+    {
+      "question": "What platforms does AutoStream work with?",
+      "answer": "AutoStream integrates directly with YouTube, Instagram, TikTok, and LinkedIn. You can also export and upload manually to any platform."
+    }
+  ]
+}
