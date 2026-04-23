@@ -81,7 +81,7 @@ pip install -r requirements.txt
 Create a `.env` file:
 
 ```
-OPENROUTER_API_KEY=your_api_key_here
+OPENROUTER_API_KEY=sk-or-v1___________________________________
 ```
 
 ---
